@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "code": 200,
+  "message": "请求成功",
+  "datetime": "2026-10-14T17:13:43.704",
+  "traceId": "offline-fixture",
+  "data": {
+    "timestamp": 1789000000000,
+    "datetime": "2026-10-14T17:13:43.704",
+    "date": "2026-10-14",
+    "time": "17:13:43",
+    "timezone": "GMT+08:00",
+    "offset": "+08:00"
+  }
+}

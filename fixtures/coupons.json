@@ -1,0 +1,88 @@
+{
+  "100001": {
+    "1": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": [
+        {
+          "couponId": "CP01",
+          "couponCode": "CC01",
+          "title": "满 25 减 5",
+          "thresholdFen": 2500,
+          "discountFen": 500,
+          "products": []
+        },
+        {
+          "couponId": "CP02",
+          "couponCode": "CC02",
+          "title": "满 40 减 10",
+          "thresholdFen": 4000,
+          "discountFen": 1000,
+          "products": []
+        },
+        {
+          "couponId": "CP03",
+          "couponCode": "CC03",
+          "title": "中薯条买一送一",
+          "products": [
+            {
+              "productCode": "2001",
+              "productName": "中薯条"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "100002": {
+    "1": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": []
+    }
+  },
+  "100003": {
+    "1": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": [
+        {
+          "couponId": "CP04",
+          "couponCode": "CC04",
+          "title": "满 30 减 6",
+          "thresholdFen": 3000,
+          "discountFen": 600,
+          "products": []
+        }
+      ]
+    }
+  },
+  "100004": {
+    "2": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": [
+        {
+          "couponId": "CP05",
+          "couponCode": "CC05",
+          "title": "外送满 35 减 8",
+          "thresholdFen": 3500,
+          "discountFen": 800,
+          "products": []
+        }
+      ]
+    }
+  }
+}

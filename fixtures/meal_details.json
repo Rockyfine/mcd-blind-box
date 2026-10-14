@@ -1,0 +1,159 @@
+{
+  "1001": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": {
+      "productCode": "1001",
+      "name": "巨无霸",
+      "supportModify": true,
+      "rounds": [],
+      "modification": {
+        "items": [
+          {
+            "maxValues": 2,
+            "minValues": 0,
+            "values": [
+              {
+                "code": "V1001",
+                "name": "麦香鸡酱",
+                "selectedQuantity": 1,
+                "selectedKey": "0-1",
+                "unselectedKey": "0-0"
+              },
+              {
+                "code": "V1002",
+                "name": "切块生菜",
+                "selectedQuantity": 0,
+                "selectedKey": "0-1",
+                "unselectedKey": "0-0"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "1003": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": {
+      "productCode": "1003",
+      "name": "香辣鸡腿堡",
+      "supportModify": true,
+      "rounds": [],
+      "modification": {
+        "items": [
+          {
+            "maxValues": 1,
+            "minValues": 1,
+            "values": [
+              {
+                "code": "V3001",
+                "name": "标准辣",
+                "selectedQuantity": 1,
+                "selectedKey": "0-1",
+                "unselectedKey": "0-0"
+              },
+              {
+                "code": "V3002",
+                "name": "加辣",
+                "selectedQuantity": 0,
+                "selectedKey": "1-1",
+                "unselectedKey": "1-0"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "1006": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": {
+      "productCode": "1006",
+      "name": "麻辣鸡腿堡",
+      "supportModify": true,
+      "rounds": [],
+      "modification": {
+        "items": [
+          {
+            "maxValues": 1,
+            "minValues": 1,
+            "values": [
+              {
+                "code": "V6001",
+                "name": "正常辣",
+                "selectedQuantity": 1,
+                "selectedKey": "0-1"
+              },
+              {
+                "code": "V6002",
+                "name": "少辣",
+                "selectedQuantity": 0,
+                "selectedKey": "0-1"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "1005": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": {
+      "productCode": "1005",
+      "name": "鳕鱼堡套餐",
+      "supportModify": true,
+      "modification": {
+        "items": []
+      },
+      "rounds": [
+        {
+          "id": 1,
+          "name": "鳕鱼堡",
+          "quantity": 1,
+          "choices": [
+            {
+              "code": "1600",
+              "name": "鳕鱼堡",
+              "quantity": 1,
+              "isDefault": 1,
+              "supportModify": true,
+              "modification": {
+                "items": [
+                  {
+                    "maxValues": 1,
+                    "minValues": 0,
+                    "values": [
+                      {
+                        "code": "V9001",
+                        "name": "多加酱",
+                        "selectedQuantity": 1,
+                        "selectedKey": "0-1",
+                        "unselectedKey": "0-0"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

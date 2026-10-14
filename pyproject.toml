@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcd-blind-box"
+version = "1.0.0"
+description = "麦门盲盒 —— 基于麦当劳中国 MCP Server 的可验证开盲盒工具（零依赖，默认不下单）"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+
+# 刻意为空：整个项目只用 Python 标准库。
+# `python -m mcd_blind_box verify --offline` 会扫描源码证明这一点。
+dependencies = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: End Users/Desktop",
+]
+
+[project.urls]
+Homepage = "https://open.mcd.cn/mcp"
+
+[project.scripts]
+mcd-blind-box = "mcd_blind_box.cli:main"
+
+[tool.setuptools]
+packages = ["mcd_blind_box"]
+include-package-data = false
+
+[tool.setuptools.package-data]
+# fixtures 与 Skill 不随包分发：它们跟着仓库走，离线复现依赖仓库根目录结构
+mcd_blind_box = []

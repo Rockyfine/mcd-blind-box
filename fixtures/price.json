@@ -1,0 +1,25 @@
+{
+  "note": "取餐方式取自真实 calculate-price 返回的 takeWayList[].code，按 beType 分档；离线价格由 FixtureBackend 依菜单价与券规则复算。",
+  "takeWayList": {
+    "1": [
+      {
+        "code": "eat-in",
+        "title": "堂食",
+        "subtitle": "店内用餐"
+      },
+      {
+        "code": "take-in-store",
+        "title": "外带",
+        "subtitle": "店内自提"
+      }
+    ],
+    "5": [
+      {
+        "code": "take-dt-quick",
+        "title": "得来速",
+        "subtitle": "车道取餐"
+      }
+    ],
+    "2": []
+  }
+}

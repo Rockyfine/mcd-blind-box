@@ -1,0 +1,62 @@
+{
+  "1": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": [
+      {
+        "storeCode": "100001",
+        "storeName": "南京新街口餐厅",
+        "address": "中山南路 1 号",
+        "distance": 182,
+        "businessStatus": true,
+        "reservation": true
+      },
+      {
+        "storeCode": "100002",
+        "storeName": "南京鼓楼餐厅",
+        "address": "中央路 1 号",
+        "distance": 860,
+        "businessStatus": true,
+        "reservation": false
+      }
+    ]
+  },
+  "5": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": [
+      {
+        "storeCode": "100003",
+        "beCode": "DT9001",
+        "storeName": "南京卡子门得来速店",
+        "address": "卡子门大街 1 号",
+        "distance": 7841,
+        "businessStatus": true,
+        "reservation": true
+      }
+    ]
+  },
+  "2": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": [
+      {
+        "storeCode": "100004",
+        "beCode": "DL8001",
+        "storeName": "南京鼓楼麦乐送店",
+        "address": "中央路 1 号",
+        "businessStatus": true,
+        "reservation": true
+      }
+    ]
+  }
+}

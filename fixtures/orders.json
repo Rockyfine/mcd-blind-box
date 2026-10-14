@@ -1,0 +1,15 @@
+{
+  "note": "离线假订单模板；create-order 不会产生任何真实交易。",
+  "created": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": {
+      "orderId": "OFFLINE0001",
+      "status": "待支付",
+      "offline": true
+    }
+  }
+}

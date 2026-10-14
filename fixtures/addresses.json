@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "code": 200,
+  "message": "请求成功",
+  "datetime": "2026-10-14T17:13:43.704",
+  "traceId": "offline-fixture",
+  "data": {
+    "addresses": [
+      {
+        "addressId": "A1001",
+        "contactName": "示例联系人",
+        "phone": "138****0000",
+        "fullAddress": "示例省示例市示例区示例路 1 号"
+      }
+    ]
+  }
+}

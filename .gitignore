@@ -1,0 +1,47 @@
+# ---- 敏感文件（绝不能提交）----
+# 工作区宿主目录（可能含 mcp.json、会话记录、Token）
+.workbuddy/
+.workbuddy/**/memory/
+
+# MCP 凭证与本地配置
+mcp.json
+**/mcp.json
+.env
+.env.*
+*.token
+*.secret
+token.txt
+credentials.json
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 本地临时 ----
+*.local.*
+docs/images/*.local.*
+tmp/
+scratch/

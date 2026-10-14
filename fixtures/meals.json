@@ -1,0 +1,1390 @@
+{
+  "100001": {
+    "1": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": {
+        "categories": [
+          {
+            "name": "鸡肉汉堡/卷",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "人气热卖",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1008",
+                "tags": []
+              },
+              {
+                "code": "1011",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "巨无霸牛鱼肉堡",
+            "meals": [
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1005",
+                "tags": []
+              },
+              {
+                "code": "1009",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "大堡口福单人餐",
+            "meals": [
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1006",
+                "tags": []
+              },
+              {
+                "code": "1010",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "小食",
+            "meals": [
+              {
+                "code": "2001",
+                "tags": []
+              },
+              {
+                "code": "2002",
+                "tags": []
+              },
+              {
+                "code": "2003",
+                "tags": []
+              },
+              {
+                "code": "2004",
+                "tags": []
+              },
+              {
+                "code": "2005",
+                "tags": []
+              },
+              {
+                "code": "2006",
+                "tags": []
+              },
+              {
+                "code": "2007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "饮品",
+            "meals": [
+              {
+                "code": "3001",
+                "tags": []
+              },
+              {
+                "code": "3002",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "麦咖啡™",
+            "meals": [
+              {
+                "code": "3003",
+                "tags": []
+              },
+              {
+                "code": "3004",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "甜品",
+            "meals": [
+              {
+                "code": "4001",
+                "tags": []
+              },
+              {
+                "code": "4002",
+                "tags": []
+              },
+              {
+                "code": "4003",
+                "tags": []
+              }
+            ]
+          }
+        ],
+        "meals": {
+          "1001": {
+            "name": "巨无霸",
+            "image": "https://example.invalid/fixture/1001.png",
+            "currentPrice": "28.5",
+            "originalPrice": "28.5",
+            "canWithOrder": false
+          },
+          "1002": {
+            "name": "双层吉士汉堡",
+            "image": "https://example.invalid/fixture/1002.png",
+            "currentPrice": "22.0",
+            "originalPrice": "22.0",
+            "canWithOrder": false
+          },
+          "1003": {
+            "name": "香辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1003.png",
+            "currentPrice": "20.5",
+            "originalPrice": "20.5",
+            "canWithOrder": false
+          },
+          "1004": {
+            "name": "麦香鸡",
+            "image": "https://example.invalid/fixture/1004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "1005": {
+            "name": "鳕鱼堡",
+            "image": "https://example.invalid/fixture/1005.png",
+            "currentPrice": "18.0",
+            "originalPrice": "18.0",
+            "canWithOrder": false
+          },
+          "1006": {
+            "name": "麻辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1006.png",
+            "currentPrice": "21.0",
+            "originalPrice": "21.0",
+            "canWithOrder": false
+          },
+          "1007": {
+            "name": "田园脆鸡堡",
+            "image": "https://example.invalid/fixture/1007.png",
+            "currentPrice": "16.5",
+            "originalPrice": "16.5",
+            "canWithOrder": false
+          },
+          "1008": {
+            "name": "双层牛肉堡",
+            "image": "https://example.invalid/fixture/1008.png",
+            "currentPrice": "25.0",
+            "originalPrice": "25.0",
+            "canWithOrder": false
+          },
+          "1009": {
+            "name": "蔬菜沙拉卷",
+            "image": "https://example.invalid/fixture/1009.png",
+            "currentPrice": "13.0",
+            "originalPrice": "13.0",
+            "canWithOrder": false
+          },
+          "1010": {
+            "name": "板烧鸡腿堡",
+            "image": "https://example.invalid/fixture/1010.png",
+            "currentPrice": "23.0",
+            "originalPrice": "23.0",
+            "canWithOrder": false
+          },
+          "1011": {
+            "name": "藤椒鸡腿堡",
+            "image": "https://example.invalid/fixture/1011.png",
+            "currentPrice": "21.5",
+            "originalPrice": "21.5",
+            "canWithOrder": false
+          },
+          "2001": {
+            "name": "中薯条",
+            "image": "https://example.invalid/fixture/2001.png",
+            "currentPrice": "11.0",
+            "originalPrice": "11.0",
+            "canWithOrder": false
+          },
+          "2002": {
+            "name": "大薯条",
+            "image": "https://example.invalid/fixture/2002.png",
+            "currentPrice": "15.5",
+            "originalPrice": "15.5",
+            "canWithOrder": false
+          },
+          "2003": {
+            "name": "麦乐鸡5块",
+            "image": "https://example.invalid/fixture/2003.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "2004": {
+            "name": "麦辣鸡翅-2块",
+            "image": "https://example.invalid/fixture/2004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "2005": {
+            "name": "玉米杯",
+            "image": "https://example.invalid/fixture/2005.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "2006": {
+            "name": "田园沙拉",
+            "image": "https://example.invalid/fixture/2006.png",
+            "currentPrice": "12.0",
+            "originalPrice": "12.0",
+            "canWithOrder": false
+          },
+          "2007": {
+            "name": "藤椒风味鸡块",
+            "image": "https://example.invalid/fixture/2007.png",
+            "currentPrice": "15.0",
+            "originalPrice": "15.0",
+            "canWithOrder": false
+          },
+          "3001": {
+            "name": "可口可乐中杯",
+            "image": "https://example.invalid/fixture/3001.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3002": {
+            "name": "雪碧中杯",
+            "image": "https://example.invalid/fixture/3002.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3003": {
+            "name": "麦咖啡拿铁",
+            "image": "https://example.invalid/fixture/3003.png",
+            "currentPrice": "19.0",
+            "originalPrice": "19.0",
+            "canWithOrder": false
+          },
+          "3004": {
+            "name": "麦咖啡美式",
+            "image": "https://example.invalid/fixture/3004.png",
+            "currentPrice": "11.9",
+            "originalPrice": "11.9",
+            "canWithOrder": false
+          },
+          "4001": {
+            "name": "香芋派",
+            "image": "https://example.invalid/fixture/4001.png",
+            "currentPrice": "8.0",
+            "originalPrice": "8.0",
+            "canWithOrder": false
+          },
+          "4002": {
+            "name": "奥利奥麦旋风",
+            "image": "https://example.invalid/fixture/4002.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "4003": {
+            "name": "圆筒冰淇淋",
+            "image": "https://example.invalid/fixture/4003.png",
+            "currentPrice": "5.0",
+            "originalPrice": "5.0",
+            "canWithOrder": false
+          }
+        },
+        "frequent": []
+      }
+    }
+  },
+  "100002": {
+    "1": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": {
+        "categories": [
+          {
+            "name": "鸡肉汉堡/卷",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "人气热卖",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1008",
+                "tags": []
+              },
+              {
+                "code": "1011",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "巨无霸牛鱼肉堡",
+            "meals": [
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1005",
+                "tags": []
+              },
+              {
+                "code": "1009",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "大堡口福单人餐",
+            "meals": [
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1006",
+                "tags": []
+              },
+              {
+                "code": "1010",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "小食",
+            "meals": [
+              {
+                "code": "2001",
+                "tags": []
+              },
+              {
+                "code": "2002",
+                "tags": []
+              },
+              {
+                "code": "2003",
+                "tags": []
+              },
+              {
+                "code": "2004",
+                "tags": []
+              },
+              {
+                "code": "2005",
+                "tags": []
+              },
+              {
+                "code": "2006",
+                "tags": []
+              },
+              {
+                "code": "2007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "饮品",
+            "meals": [
+              {
+                "code": "3001",
+                "tags": []
+              },
+              {
+                "code": "3002",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "麦咖啡™",
+            "meals": [
+              {
+                "code": "3003",
+                "tags": []
+              },
+              {
+                "code": "3004",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "甜品",
+            "meals": [
+              {
+                "code": "4001",
+                "tags": []
+              },
+              {
+                "code": "4002",
+                "tags": []
+              },
+              {
+                "code": "4003",
+                "tags": []
+              }
+            ]
+          }
+        ],
+        "meals": {
+          "1001": {
+            "name": "巨无霸",
+            "image": "https://example.invalid/fixture/1001.png",
+            "currentPrice": "28.5",
+            "originalPrice": "28.5",
+            "canWithOrder": false
+          },
+          "1002": {
+            "name": "双层吉士汉堡",
+            "image": "https://example.invalid/fixture/1002.png",
+            "currentPrice": "22.0",
+            "originalPrice": "22.0",
+            "canWithOrder": false
+          },
+          "1003": {
+            "name": "香辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1003.png",
+            "currentPrice": "20.5",
+            "originalPrice": "20.5",
+            "canWithOrder": false
+          },
+          "1004": {
+            "name": "麦香鸡",
+            "image": "https://example.invalid/fixture/1004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "1005": {
+            "name": "鳕鱼堡",
+            "image": "https://example.invalid/fixture/1005.png",
+            "currentPrice": "18.0",
+            "originalPrice": "18.0",
+            "canWithOrder": false
+          },
+          "1006": {
+            "name": "麻辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1006.png",
+            "currentPrice": "21.0",
+            "originalPrice": "21.0",
+            "canWithOrder": false
+          },
+          "1007": {
+            "name": "田园脆鸡堡",
+            "image": "https://example.invalid/fixture/1007.png",
+            "currentPrice": "16.5",
+            "originalPrice": "16.5",
+            "canWithOrder": false
+          },
+          "1008": {
+            "name": "双层牛肉堡",
+            "image": "https://example.invalid/fixture/1008.png",
+            "currentPrice": "25.0",
+            "originalPrice": "25.0",
+            "canWithOrder": false
+          },
+          "1009": {
+            "name": "蔬菜沙拉卷",
+            "image": "https://example.invalid/fixture/1009.png",
+            "currentPrice": "13.0",
+            "originalPrice": "13.0",
+            "canWithOrder": false
+          },
+          "1010": {
+            "name": "板烧鸡腿堡",
+            "image": "https://example.invalid/fixture/1010.png",
+            "currentPrice": "23.0",
+            "originalPrice": "23.0",
+            "canWithOrder": false
+          },
+          "1011": {
+            "name": "藤椒鸡腿堡",
+            "image": "https://example.invalid/fixture/1011.png",
+            "currentPrice": "21.5",
+            "originalPrice": "21.5",
+            "canWithOrder": false
+          },
+          "2001": {
+            "name": "中薯条",
+            "image": "https://example.invalid/fixture/2001.png",
+            "currentPrice": "11.0",
+            "originalPrice": "11.0",
+            "canWithOrder": false
+          },
+          "2002": {
+            "name": "大薯条",
+            "image": "https://example.invalid/fixture/2002.png",
+            "currentPrice": "15.5",
+            "originalPrice": "15.5",
+            "canWithOrder": false
+          },
+          "2003": {
+            "name": "麦乐鸡5块",
+            "image": "https://example.invalid/fixture/2003.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "2004": {
+            "name": "麦辣鸡翅-2块",
+            "image": "https://example.invalid/fixture/2004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "2005": {
+            "name": "玉米杯",
+            "image": "https://example.invalid/fixture/2005.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "2006": {
+            "name": "田园沙拉",
+            "image": "https://example.invalid/fixture/2006.png",
+            "currentPrice": "12.0",
+            "originalPrice": "12.0",
+            "canWithOrder": false
+          },
+          "2007": {
+            "name": "藤椒风味鸡块",
+            "image": "https://example.invalid/fixture/2007.png",
+            "currentPrice": "15.0",
+            "originalPrice": "15.0",
+            "canWithOrder": false
+          },
+          "3001": {
+            "name": "可口可乐中杯",
+            "image": "https://example.invalid/fixture/3001.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3002": {
+            "name": "雪碧中杯",
+            "image": "https://example.invalid/fixture/3002.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3003": {
+            "name": "麦咖啡拿铁",
+            "image": "https://example.invalid/fixture/3003.png",
+            "currentPrice": "19.0",
+            "originalPrice": "19.0",
+            "canWithOrder": false
+          },
+          "3004": {
+            "name": "麦咖啡美式",
+            "image": "https://example.invalid/fixture/3004.png",
+            "currentPrice": "11.9",
+            "originalPrice": "11.9",
+            "canWithOrder": false
+          },
+          "4001": {
+            "name": "香芋派",
+            "image": "https://example.invalid/fixture/4001.png",
+            "currentPrice": "8.0",
+            "originalPrice": "8.0",
+            "canWithOrder": false
+          },
+          "4002": {
+            "name": "奥利奥麦旋风",
+            "image": "https://example.invalid/fixture/4002.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "4003": {
+            "name": "圆筒冰淇淋",
+            "image": "https://example.invalid/fixture/4003.png",
+            "currentPrice": "5.0",
+            "originalPrice": "5.0",
+            "canWithOrder": false
+          }
+        },
+        "frequent": []
+      }
+    }
+  },
+  "100003": {
+    "1": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": {
+        "categories": [
+          {
+            "name": "鸡肉汉堡/卷",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "人气热卖",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1008",
+                "tags": []
+              },
+              {
+                "code": "1011",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "巨无霸牛鱼肉堡",
+            "meals": [
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1005",
+                "tags": []
+              },
+              {
+                "code": "1009",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "大堡口福单人餐",
+            "meals": [
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1006",
+                "tags": []
+              },
+              {
+                "code": "1010",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "小食",
+            "meals": [
+              {
+                "code": "2001",
+                "tags": []
+              },
+              {
+                "code": "2002",
+                "tags": []
+              },
+              {
+                "code": "2003",
+                "tags": []
+              },
+              {
+                "code": "2004",
+                "tags": []
+              },
+              {
+                "code": "2005",
+                "tags": []
+              },
+              {
+                "code": "2006",
+                "tags": []
+              },
+              {
+                "code": "2007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "饮品",
+            "meals": [
+              {
+                "code": "3001",
+                "tags": []
+              },
+              {
+                "code": "3002",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "麦咖啡™",
+            "meals": [
+              {
+                "code": "3003",
+                "tags": []
+              },
+              {
+                "code": "3004",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "甜品",
+            "meals": [
+              {
+                "code": "4001",
+                "tags": []
+              },
+              {
+                "code": "4002",
+                "tags": []
+              },
+              {
+                "code": "4003",
+                "tags": []
+              }
+            ]
+          }
+        ],
+        "meals": {
+          "1001": {
+            "name": "巨无霸",
+            "image": "https://example.invalid/fixture/1001.png",
+            "currentPrice": "28.5",
+            "originalPrice": "28.5",
+            "canWithOrder": false
+          },
+          "1002": {
+            "name": "双层吉士汉堡",
+            "image": "https://example.invalid/fixture/1002.png",
+            "currentPrice": "22.0",
+            "originalPrice": "22.0",
+            "canWithOrder": false
+          },
+          "1003": {
+            "name": "香辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1003.png",
+            "currentPrice": "20.5",
+            "originalPrice": "20.5",
+            "canWithOrder": false
+          },
+          "1004": {
+            "name": "麦香鸡",
+            "image": "https://example.invalid/fixture/1004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "1005": {
+            "name": "鳕鱼堡",
+            "image": "https://example.invalid/fixture/1005.png",
+            "currentPrice": "18.0",
+            "originalPrice": "18.0",
+            "canWithOrder": false
+          },
+          "1006": {
+            "name": "麻辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1006.png",
+            "currentPrice": "21.0",
+            "originalPrice": "21.0",
+            "canWithOrder": false
+          },
+          "1007": {
+            "name": "田园脆鸡堡",
+            "image": "https://example.invalid/fixture/1007.png",
+            "currentPrice": "16.5",
+            "originalPrice": "16.5",
+            "canWithOrder": false
+          },
+          "1008": {
+            "name": "双层牛肉堡",
+            "image": "https://example.invalid/fixture/1008.png",
+            "currentPrice": "25.0",
+            "originalPrice": "25.0",
+            "canWithOrder": false
+          },
+          "1009": {
+            "name": "蔬菜沙拉卷",
+            "image": "https://example.invalid/fixture/1009.png",
+            "currentPrice": "13.0",
+            "originalPrice": "13.0",
+            "canWithOrder": false
+          },
+          "1010": {
+            "name": "板烧鸡腿堡",
+            "image": "https://example.invalid/fixture/1010.png",
+            "currentPrice": "23.0",
+            "originalPrice": "23.0",
+            "canWithOrder": false
+          },
+          "1011": {
+            "name": "藤椒鸡腿堡",
+            "image": "https://example.invalid/fixture/1011.png",
+            "currentPrice": "21.5",
+            "originalPrice": "21.5",
+            "canWithOrder": false
+          },
+          "2001": {
+            "name": "中薯条",
+            "image": "https://example.invalid/fixture/2001.png",
+            "currentPrice": "11.0",
+            "originalPrice": "11.0",
+            "canWithOrder": false
+          },
+          "2002": {
+            "name": "大薯条",
+            "image": "https://example.invalid/fixture/2002.png",
+            "currentPrice": "15.5",
+            "originalPrice": "15.5",
+            "canWithOrder": false
+          },
+          "2003": {
+            "name": "麦乐鸡5块",
+            "image": "https://example.invalid/fixture/2003.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "2004": {
+            "name": "麦辣鸡翅-2块",
+            "image": "https://example.invalid/fixture/2004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "2005": {
+            "name": "玉米杯",
+            "image": "https://example.invalid/fixture/2005.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "2006": {
+            "name": "田园沙拉",
+            "image": "https://example.invalid/fixture/2006.png",
+            "currentPrice": "12.0",
+            "originalPrice": "12.0",
+            "canWithOrder": false
+          },
+          "2007": {
+            "name": "藤椒风味鸡块",
+            "image": "https://example.invalid/fixture/2007.png",
+            "currentPrice": "15.0",
+            "originalPrice": "15.0",
+            "canWithOrder": false
+          },
+          "3001": {
+            "name": "可口可乐中杯",
+            "image": "https://example.invalid/fixture/3001.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3002": {
+            "name": "雪碧中杯",
+            "image": "https://example.invalid/fixture/3002.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3003": {
+            "name": "麦咖啡拿铁",
+            "image": "https://example.invalid/fixture/3003.png",
+            "currentPrice": "19.0",
+            "originalPrice": "19.0",
+            "canWithOrder": false
+          },
+          "3004": {
+            "name": "麦咖啡美式",
+            "image": "https://example.invalid/fixture/3004.png",
+            "currentPrice": "11.9",
+            "originalPrice": "11.9",
+            "canWithOrder": false
+          },
+          "4001": {
+            "name": "香芋派",
+            "image": "https://example.invalid/fixture/4001.png",
+            "currentPrice": "8.0",
+            "originalPrice": "8.0",
+            "canWithOrder": false
+          },
+          "4002": {
+            "name": "奥利奥麦旋风",
+            "image": "https://example.invalid/fixture/4002.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "4003": {
+            "name": "圆筒冰淇淋",
+            "image": "https://example.invalid/fixture/4003.png",
+            "currentPrice": "5.0",
+            "originalPrice": "5.0",
+            "canWithOrder": false
+          }
+        },
+        "frequent": []
+      }
+    }
+  },
+  "100004": {
+    "2": {
+      "success": true,
+      "code": 200,
+      "message": "请求成功",
+      "datetime": "2026-10-14T17:13:43.704",
+      "traceId": "offline-fixture",
+      "data": {
+        "categories": [
+          {
+            "name": "鸡肉汉堡/卷",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "人气热卖",
+            "meals": [
+              {
+                "code": "1001",
+                "tags": []
+              },
+              {
+                "code": "1003",
+                "tags": []
+              },
+              {
+                "code": "1008",
+                "tags": []
+              },
+              {
+                "code": "1011",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "巨无霸牛鱼肉堡",
+            "meals": [
+              {
+                "code": "1002",
+                "tags": []
+              },
+              {
+                "code": "1005",
+                "tags": []
+              },
+              {
+                "code": "1009",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "大堡口福单人餐",
+            "meals": [
+              {
+                "code": "1004",
+                "tags": []
+              },
+              {
+                "code": "1006",
+                "tags": []
+              },
+              {
+                "code": "1010",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "小食",
+            "meals": [
+              {
+                "code": "2001",
+                "tags": []
+              },
+              {
+                "code": "2002",
+                "tags": []
+              },
+              {
+                "code": "2003",
+                "tags": []
+              },
+              {
+                "code": "2004",
+                "tags": []
+              },
+              {
+                "code": "2005",
+                "tags": []
+              },
+              {
+                "code": "2006",
+                "tags": []
+              },
+              {
+                "code": "2007",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "饮品",
+            "meals": [
+              {
+                "code": "3001",
+                "tags": []
+              },
+              {
+                "code": "3002",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "麦咖啡™",
+            "meals": [
+              {
+                "code": "3003",
+                "tags": []
+              },
+              {
+                "code": "3004",
+                "tags": []
+              }
+            ]
+          },
+          {
+            "name": "甜品",
+            "meals": [
+              {
+                "code": "4001",
+                "tags": []
+              },
+              {
+                "code": "4002",
+                "tags": []
+              },
+              {
+                "code": "4003",
+                "tags": []
+              }
+            ]
+          }
+        ],
+        "meals": {
+          "1001": {
+            "name": "巨无霸",
+            "image": "https://example.invalid/fixture/1001.png",
+            "currentPrice": "28.5",
+            "originalPrice": "28.5",
+            "canWithOrder": false
+          },
+          "1002": {
+            "name": "双层吉士汉堡",
+            "image": "https://example.invalid/fixture/1002.png",
+            "currentPrice": "22.0",
+            "originalPrice": "22.0",
+            "canWithOrder": false
+          },
+          "1003": {
+            "name": "香辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1003.png",
+            "currentPrice": "20.5",
+            "originalPrice": "20.5",
+            "canWithOrder": false
+          },
+          "1004": {
+            "name": "麦香鸡",
+            "image": "https://example.invalid/fixture/1004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "1005": {
+            "name": "鳕鱼堡",
+            "image": "https://example.invalid/fixture/1005.png",
+            "currentPrice": "18.0",
+            "originalPrice": "18.0",
+            "canWithOrder": false
+          },
+          "1006": {
+            "name": "麻辣鸡腿堡",
+            "image": "https://example.invalid/fixture/1006.png",
+            "currentPrice": "21.0",
+            "originalPrice": "21.0",
+            "canWithOrder": false
+          },
+          "1007": {
+            "name": "田园脆鸡堡",
+            "image": "https://example.invalid/fixture/1007.png",
+            "currentPrice": "16.5",
+            "originalPrice": "16.5",
+            "canWithOrder": false
+          },
+          "1008": {
+            "name": "双层牛肉堡",
+            "image": "https://example.invalid/fixture/1008.png",
+            "currentPrice": "25.0",
+            "originalPrice": "25.0",
+            "canWithOrder": false
+          },
+          "1009": {
+            "name": "蔬菜沙拉卷",
+            "image": "https://example.invalid/fixture/1009.png",
+            "currentPrice": "13.0",
+            "originalPrice": "13.0",
+            "canWithOrder": false
+          },
+          "1010": {
+            "name": "板烧鸡腿堡",
+            "image": "https://example.invalid/fixture/1010.png",
+            "currentPrice": "23.0",
+            "originalPrice": "23.0",
+            "canWithOrder": false
+          },
+          "1011": {
+            "name": "藤椒鸡腿堡",
+            "image": "https://example.invalid/fixture/1011.png",
+            "currentPrice": "21.5",
+            "originalPrice": "21.5",
+            "canWithOrder": false
+          },
+          "2001": {
+            "name": "中薯条",
+            "image": "https://example.invalid/fixture/2001.png",
+            "currentPrice": "11.0",
+            "originalPrice": "11.0",
+            "canWithOrder": false
+          },
+          "2002": {
+            "name": "大薯条",
+            "image": "https://example.invalid/fixture/2002.png",
+            "currentPrice": "15.5",
+            "originalPrice": "15.5",
+            "canWithOrder": false
+          },
+          "2003": {
+            "name": "麦乐鸡5块",
+            "image": "https://example.invalid/fixture/2003.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "2004": {
+            "name": "麦辣鸡翅-2块",
+            "image": "https://example.invalid/fixture/2004.png",
+            "currentPrice": "14.5",
+            "originalPrice": "14.5",
+            "canWithOrder": false
+          },
+          "2005": {
+            "name": "玉米杯",
+            "image": "https://example.invalid/fixture/2005.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "2006": {
+            "name": "田园沙拉",
+            "image": "https://example.invalid/fixture/2006.png",
+            "currentPrice": "12.0",
+            "originalPrice": "12.0",
+            "canWithOrder": false
+          },
+          "2007": {
+            "name": "藤椒风味鸡块",
+            "image": "https://example.invalid/fixture/2007.png",
+            "currentPrice": "15.0",
+            "originalPrice": "15.0",
+            "canWithOrder": false
+          },
+          "3001": {
+            "name": "可口可乐中杯",
+            "image": "https://example.invalid/fixture/3001.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3002": {
+            "name": "雪碧中杯",
+            "image": "https://example.invalid/fixture/3002.png",
+            "currentPrice": "9.5",
+            "originalPrice": "9.5",
+            "canWithOrder": false
+          },
+          "3003": {
+            "name": "麦咖啡拿铁",
+            "image": "https://example.invalid/fixture/3003.png",
+            "currentPrice": "19.0",
+            "originalPrice": "19.0",
+            "canWithOrder": false
+          },
+          "3004": {
+            "name": "麦咖啡美式",
+            "image": "https://example.invalid/fixture/3004.png",
+            "currentPrice": "11.9",
+            "originalPrice": "11.9",
+            "canWithOrder": false
+          },
+          "4001": {
+            "name": "香芋派",
+            "image": "https://example.invalid/fixture/4001.png",
+            "currentPrice": "8.0",
+            "originalPrice": "8.0",
+            "canWithOrder": false
+          },
+          "4002": {
+            "name": "奥利奥麦旋风",
+            "image": "https://example.invalid/fixture/4002.png",
+            "currentPrice": "13.5",
+            "originalPrice": "13.5",
+            "canWithOrder": false
+          },
+          "4003": {
+            "name": "圆筒冰淇淋",
+            "image": "https://example.invalid/fixture/4003.png",
+            "currentPrice": "5.0",
+            "originalPrice": "5.0",
+            "canWithOrder": false
+          }
+        },
+        "frequent": []
+      }
+    }
+  }
+}
