@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from mcd_blind_box.challenge import (  # noqa: E402
     budget_cap_fen,
     calorie_extras_filter,
+    dedup_extras_filter,
     describe_modes,
     extra_item_count,
     filter_by_calories,
@@ -23,6 +24,8 @@ from mcd_blind_box.challenge import (  # noqa: E402
     relax_calorie,
     requires_pricing,
     skeleton_for_budget,
+    style_key,
+    style_key_for,
 )
 from mcd_blind_box.constants import TASTE_KEYWORDS  # noqa: E402
 from mcd_blind_box.errors import ConstraintUnsatisfiable, InvalidArgument  # noqa: E402
@@ -207,6 +210,63 @@ class TestRelaxation(unittest.TestCase):
     def test_calorie_empty(self):
         with self.assertRaises(ConstraintUnsatisfiable):
             relax_calorie([])
+
+
+class TestStyleKey(unittest.TestCase):
+    """「样式重复」去重的归一规则：同名不同规格归一，跨品类不归一。"""
+
+    def test_same_style_different_size(self):
+        """中薯条 / 大薯条归一成同一个样式。"""
+        self.assertEqual(
+            style_key(m("2001", "中薯条", "side")),
+            style_key(m("2002", "大薯条", "side")),
+        )
+
+    def test_different_style_same_category_stays_distinct(self):
+        """同为小食但不同样式（薯条 vs 麦乐鸡）不判重复。"""
+        self.assertNotEqual(
+            style_key(m("2001", "中薯条", "side")),
+            style_key(m("2003", "麦乐鸡5块", "side")),
+        )
+
+    def test_category_is_part_of_the_key(self):
+        """同名但品类不同不算重复（名称相同、品类兜底区分）。"""
+        self.assertNotEqual(
+            style_key(m("P1", "鳕鱼堡", "main")),
+            style_key(m("P2", "鳕鱼堡", "side")),
+        )
+
+    def test_style_key_for_accepts_name_and_category(self):
+        """style_key_for 直接吃名称 + 品类，供套餐子项（无 Meal 对象）复用。"""
+        self.assertEqual(style_key_for("中薯条", "side"), "side:薯条")
+        self.assertEqual(style_key_for("可口可乐中杯", "drink"), "drink:可口可乐中")
+
+    def test_combo_sub_item_matches_side_style(self):
+        """套餐内「中薯条」子项的样式键，与配品「大薯条」的样式键相同。"""
+        self.assertEqual(
+            style_key_for("中薯条", "side"),
+            style_key(m("2002", "大薯条", "side")),
+        )
+
+
+class TestDedupExtrasFilter(unittest.TestCase):
+    def test_none_when_no_occupied(self):
+        self.assertIsNone(dedup_extras_filter([]))
+
+    def test_rejects_same_style_as_occupied(self):
+        f = dedup_extras_filter(["side:薯条"])
+        self.assertFalse(f(m("2001", "中薯条", "side"), []))
+        self.assertFalse(f(m("2002", "大薯条", "side"), []))
+
+    def test_allows_different_style(self):
+        f = dedup_extras_filter(["side:薯条"])
+        self.assertTrue(f(m("2003", "麦乐鸡5块", "side"), []))
+        self.assertTrue(f(m("3001", "可口可乐中杯", "drink"), []))
+
+    def test_rejects_same_category_fallback(self):
+        """即便名称去壳后仍不同，同品类兜底：occupancy 用原始品类键也能挡。"""
+        f = dedup_extras_filter(["side:麦乐鸡5"])
+        self.assertFalse(f(m("2003", "麦乐鸡5块", "side"), []))
 
 
 class TestModeHelpers(unittest.TestCase):

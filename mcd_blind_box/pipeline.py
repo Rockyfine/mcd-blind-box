@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from . import rules
 from .challenge import (
@@ -35,10 +35,13 @@ from .challenge import (
     pick_main_categories,
     relax_budget,
     relax_calorie,
+    style_key,
+    style_key_for,
 )
 from .constants import (
     CANDIDATE_COUNT,
     CAT_MAIN,
+    COMBO_NAME_HINTS,
     ORDER_TYPE_DELIVERY,
     ORDER_TYPE_IN_STORE,
     SEED_STRIDE,
@@ -49,6 +52,15 @@ from .models import CartItem, Combo, Coupon, Meal, MealDetail, PriceResult, Reve
 from .pricing import to_price_result, total_calories
 
 _COUPON_SOURCE = "query-store-coupons"
+
+
+def _looks_like_combo(name: str) -> bool:
+    """餐品名是否命中套餐信号词 —— 决定是否展开 rounds 默认子项做去重。
+
+    只是「要不要查详情」的判据，不是套餐定义。普通单品名不含这些词，
+    于是零额外调用；命中（如「鳕鱼堡套餐」）才查 ``query-meal-detail``。
+    """
+    return any(hint in name for hint in COMBO_NAME_HINTS)
 
 
 class BlindBoxPipeline:
@@ -257,6 +269,13 @@ class BlindBoxPipeline:
         coupons = self._fetch_coupons()
         extras = extra_item_count(budget_yuan)
         main_pool = pick_main_categories(pool)
+
+        # 4.5) 套餐子项去重：主品若是 rounds 套餐，其内部默认选中的子商品
+        #    （如「鳕鱼堡套餐」内含的中薯条）也算「已占用样式」，
+        #    配品抽取时必须避开，避免默认盲盒出现样式重复。
+        #    主品样式 = 主品自身 + 套餐默认子项（预取主品详情，复用特调缓存）。
+        dedup_filter = self._build_dedup_filter(main_pool)
+
         candidates = generate_candidates(
             pool,
             seed_ts,
@@ -264,6 +283,7 @@ class BlindBoxPipeline:
             main_pool=main_pool,
             extras=extras,
             extra_filter=combine_filters(
+                dedup_filter,
                 calorie_extras_filter(calorie_cap, by_code)
                 if has_mode(normalized, MODE_CALORIE)
                 else None,
@@ -284,7 +304,9 @@ class BlindBoxPipeline:
         evaluated = []
         for candidate in candidates:
             picks = build_combo_meals(candidate, pool, extras=extras)
-            items = self._to_items(picks, with_modification=with_modification)
+            items = self._fill_combo_unit_price(
+                self._to_items(picks, with_modification=with_modification)
+            )
             subtotal = sum(i.subtotal_fen() for i in items)
             coupon = select_coupon(
                 coupons, subtotal, [i.product_code for i in items]
@@ -619,6 +641,61 @@ class BlindBoxPipeline:
         raw = self.backend.call_tool("calculate-price", args)
         return to_price_result(raw, items)
 
+    def _fill_combo_unit_price(self, items: List[CartItem]) -> List[CartItem]:
+        """把套餐主品的单价回填为服务端算价口径。
+
+        ``query-meals.currentPrice`` 对套餐只返回**主品挂牌价**，而
+        ``calculate-price`` 会把套餐的默认子项展开计价 —— 两者混排在揭晓卡上
+        就出现「单项之和 ≠ 原价」。这里对疑似套餐（名含套餐信号词）的主品
+        **单独调一次单件算价**（无券、无特调），用返回的原价回填
+        ``unit_price_fen``，让单项价、原价合计、券后价三者口径一致。
+
+        结果按 ``product_code`` 缓存：候选生成的 8 个主品里套餐至多占几席，
+        同一商品绝不做第二次探测。普通单品零额外调用；探测失败（网络/服务端
+        异常）时保守保留挂牌价，绝不让开盒流程失败。
+        """
+        if not items:
+            return items
+        head = items[0]
+        if not _looks_like_combo(head.name):
+            return items
+        real_fen = self._combo_unit_price(head.product_code)
+        if real_fen is None or real_fen == head.unit_price_fen:
+            return items
+        updated = list(items)
+        updated[0] = CartItem(
+            product_code=head.product_code,
+            name=head.name,
+            quantity=head.quantity,
+            unit_price_fen=real_fen,
+            modification_values=head.modification_values,
+            coupon_id=head.coupon_id,
+            coupon_code=head.coupon_code,
+            calories=head.calories,
+            category=head.category,
+        )
+        return updated
+
+    def _combo_unit_price(self, product_code: str) -> Optional[int]:
+        """单件探测套餐的真实原价（分）；失败返回 None。带缓存。"""
+        if not hasattr(self, "_combo_price_cache"):
+            self._combo_price_cache: Dict[str, Optional[int]] = {}
+        cache = self._combo_price_cache
+        if product_code in cache:
+            return cache[product_code]
+        probe = CartItem(
+            product_code=product_code,
+            name="",
+            quantity=1,
+            unit_price_fen=0,
+        )
+        try:
+            original = self._price([probe]).original_total_fen
+        except Exception:
+            original = 0
+        cache[product_code] = original or None
+        return cache[product_code]
+
     def _server_timestamp_ms(self) -> int:
         """取服务端毫秒时间戳作种子。
 
@@ -744,6 +821,54 @@ class BlindBoxPipeline:
         if not detail.support_modify or not detail.groups:
             return []
         return rules.build_modification_values(detail.groups)
+
+    def _detail_for(self, meal: Meal) -> MealDetail:
+        """获取餐品详情并缓存（与特调共用同一份 ``_details`` 缓存）。
+
+        去重和特调都需要 ``query-meal-detail`` 的返回；这里只做「取并缓存」，
+        不判断用途 —— 避免两处各自写一套 fetch 逻辑导致缓存不一致。
+        """
+        if meal.product_code not in self._details:
+            args = rules.build_scene_args(
+                self.be_type, be_code=self.be_code, order_type=self.order_type
+            )
+            args["storeCode"] = self.store.store_code if self.store else ""
+            args["code"] = meal.product_code
+            raw = self.backend.call_tool("query-meal-detail", args)
+            self._details[meal.product_code] = MealDetail.from_api(raw)
+        return self._details[meal.product_code]
+
+    def _build_dedup_filter(
+        self, main_pool: Sequence[Meal]
+    ) -> Optional[Callable[[Meal, Sequence[Meal]], bool]]:
+        """构造「配品不与主品（含套餐默认子项）样式重复」的抽取前过滤器。
+
+        ``extra_filter(meal, picked)`` 的 ``picked[0]`` 就是主品。这里把
+        「主品自身样式」列入已占用集；若主品名命中套餐信号词（:data:`COMBO_NAME_HINTS`），
+        再惰性取它的详情、展开默认子项样式一并占用。已抽配品的样式也累加进去。
+
+        关键取舍：只有「疑似套餐」的主品才查 ``query-meal-detail``，普通单品
+        （如巨无霸）零额外调用 —— 保住「不请求特调就不查详情」的最小请求契约。
+        """
+        if not main_pool:
+            return None
+
+        def _ok(meal: Meal, picked: Sequence[Meal]) -> bool:
+            main_meal = picked[0] if picked else None
+            occupied: List[str] = []
+            if main_meal is not None:
+                occupied.append(style_key(main_meal))
+                if _looks_like_combo(main_meal.name):
+                    detail = self._detail_for(main_meal)
+                    for name, category in zip(
+                        detail.round_products, detail.round_categories
+                    ):
+                        occupied.append(style_key_for(name, category))
+            for already in picked[1:]:
+                occupied.append(style_key(already))
+            return style_key(meal) not in frozenset(occupied)
+
+        return _ok
 
     def _to_items(self, meals: Sequence[Meal], *, with_modification: bool = False) -> List[CartItem]:
         kcal_map = self._calorie_map() if self._kcal is not None else None

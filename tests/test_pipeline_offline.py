@@ -286,6 +286,143 @@ class TestComboComposition(unittest.TestCase):
         self.assertEqual(len(codes), len(set(codes)))
 
 
+class TestComboDedup(unittest.TestCase):
+    """默认盲盒是「单人餐」：配品不得与主品（含套餐默认子项）样式重复。"""
+
+    def test_combo_main_suppresses_side_of_same_style(self):
+        """主品是「鳕鱼堡套餐」（内含中薯条）时，配品不得再抽薯条样式。"""
+        from mcd_blind_box.challenge import style_key
+
+        for seed in range(0, 60):
+            with self.subTest(seed=seed):
+                _, card, _ = build("pickup", timestamp=seed)
+                head = card.combo.items[0]
+                if head.name != "鳕鱼堡套餐":
+                    continue
+                # 套餐内含「中薯条」（side:薯条）—— 配品绝不能是薯条样式
+                for item in card.combo.items[1:]:
+                    self.assertNotEqual(
+                        style_key(item), "side:薯条",
+                        f"seed={seed} 配品 {item.name} 与套餐内中薯条样式重复",
+                    )
+
+    def test_combo_sub_items_are_parsed_from_rounds(self):
+        """MealDetail 能从 rounds[].choices[] 解析出默认子项名称与品类。"""
+        from mcd_blind_box.models import MealDetail
+        import json
+
+        details = json.loads((FIXTURES_ROOT / "meal_details.json").read_text(encoding="utf-8"))
+        detail = MealDetail.from_api(details["1005"])
+        self.assertTrue(detail.has_rounds)
+        # 鳕鱼堡套餐 = 鳕鱼堡（主食） + 中薯条（小食）
+        self.assertEqual(detail.round_products, ("鳕鱼堡", "中薯条"))
+        self.assertEqual(detail.round_categories, ("main", "side"))
+
+    def test_plain_main_triggers_no_detail_lookup(self):
+        """菜单里没有套餐时，普通单品主品不因去重产生 query-meal-detail 调用。"""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            fixtures = restricted_fixtures(tmp, {"1001", "2001"})  # 巨无霸 + 中薯条
+            _, card, backend = build("pickup", timestamp=0, with_mod=False, fixtures=fixtures)
+            self.assertEqual(card.combo.items[0].name, "巨无霸")
+            self.assertNotIn("query-meal-detail", backend.calls)
+
+
+class _BrokenProbeBackend(FixtureBackend):
+    """单件算价探测一律抛错，用来验证「探测失败保守保留挂牌价」。"""
+
+    def call_tool(self, name, args):
+        items = args.get("items") or []
+        if name == "calculate-price" and len(items) == 1:
+            raise RuntimeError("server down")
+        return super().call_tool(name, args)
+
+
+class TestComboUnitPriceFillBack(unittest.TestCase):
+    """套餐主品单价回填：单项价、原价合计、券后价三者口径一致。
+
+    真实服务端对套餐（rounds 结构）的 calculate-price 按展开默认子项计价，
+    高于菜单挂牌价（火腿扒麦满分套餐实测 10.20 挂牌 vs 17.00 展开，见
+    docs/live-verification.md）。离线用 combo_prices.json 的录制复现该口径差。
+    """
+
+    def test_combo_main_unit_price_is_filled_back(self):
+        """timestamp=4 主品为鳕鱼堡套餐：单项价回填为展开价 24.00。"""
+        pipeline, card, backend = build("pickup", timestamp=4)
+        head = card.combo.items[0]
+        self.assertEqual(head.product_code, "1005")
+        self.assertEqual(head.unit_price_fen, 2400)
+        # 口径一致：原价 == 各项单价 × 数量之和
+        self.assertEqual(
+            card.price.original_total_fen,
+            sum(i.subtotal_fen() for i in card.combo.items),
+        )
+        # 探测恰好发生一次（缓存），且 payload 只有主品一件、不带券
+        probes = [
+            e for e in backend.call_args
+            if e["name"] == "calculate-price"
+            and len(e["arguments"].get("items") or []) == 1
+            and e["arguments"]["items"][0].get("productCode") == "1005"
+        ]
+        self.assertEqual(len(probes), 1)
+        self.assertNotIn("couponId", probes[0]["arguments"]["items"][0])
+
+    def test_probe_is_cached_across_calls(self):
+        """同一套餐商品重复取价不再发第二次探测调用。"""
+        backend = FixtureBackend()
+        pipeline = BlindBoxPipeline(backend, offline=True)
+        pipeline.set_scene(be_type_for_scene("pickup"))
+        pipeline.locate_store()
+        pipeline.fetch_menu()
+        first = pipeline._combo_unit_price("1005")
+        second = pipeline._combo_unit_price("1005")
+        self.assertEqual(first, 2400)
+        self.assertEqual(second, 2400)
+        probes = [
+            e for e in backend.call_args
+            if e["name"] == "calculate-price"
+            and len(e["arguments"].get("items") or []) == 1
+            and e["arguments"]["items"][0].get("productCode") == "1005"
+        ]
+        self.assertEqual(len(probes), 1)
+
+    def test_plain_main_never_probed(self):
+        """普通单品（巨无霸）主品单价不被改动；单件探测只针对套餐商品。
+
+        探测发生在候选评估阶段：8 个候选的主品若命中套餐信号词就会各探测
+        一次（同一商品有缓存），与「最终选中的主品是不是套餐」无关。
+        """
+        pipeline, card, backend = build("pickup", timestamp=0)
+        head = card.combo.items[0]
+        self.assertEqual(head.name, "巨无霸")
+        # 主品单价 = 菜单挂牌价（巨无霸 1001 → 28.50），未被回填改动
+        self.assertEqual(head.unit_price_fen, 2850)
+        # 所有单件探测的 productCode 都是套餐商品，绝无普通单品
+        for e in backend.call_args:
+            if e["name"] != "calculate-price":
+                continue
+            items = e["arguments"].get("items") or []
+            if len(items) == 1:
+                self.assertEqual(
+                    items[0].get("productCode"),
+                    "1005",
+                    f"普通单品不应触发单件探测：{e['arguments']}",
+                )
+
+    def test_probe_failure_keeps_menu_price(self):
+        """探测失败（服务端异常）时保守保留挂牌价，开盒流程不失败。"""
+        backend = _BrokenProbeBackend()
+        pipeline = BlindBoxPipeline(backend, offline=True)
+        pipeline.set_scene(be_type_for_scene("pickup"))
+        pipeline.locate_store()
+        pipeline.fetch_menu()
+        self.assertIsNone(pipeline._combo_unit_price("1005"))
+        # 全流程仍能开出盒（回填静默降级，不抛错）
+        card = pipeline.open_box(timestamp_ms=4)
+        self.assertTrue(card.combo.items)
+
+
 class TestDeterminism(unittest.TestCase):
     def test_same_seed_same_combo(self):
         _, first, _ = build("pickup", timestamp=987654321)
@@ -351,9 +488,9 @@ class TestConstraintDegradation(unittest.TestCase):
         import tempfile
 
         with tempfile.TemporaryDirectory() as tmp:
-            fixtures = restricted_fixtures(tmp, {"1005"})  # 只留鳕鱼堡
+            fixtures = restricted_fixtures(tmp, {"1005"})  # 只留鳕鱼堡套餐
             _, card, _ = build("pickup", modes=["taste"], taste="鱼", fixtures=fixtures)
-            self.assertEqual(card.combo.items[0].name, "鳕鱼堡")
+            self.assertEqual(card.combo.items[0].name, "鳕鱼堡套餐")
 
     def test_impossible_calorie_cap_raises(self):
         with self.assertRaises(ConstraintUnsatisfiable):
@@ -441,9 +578,29 @@ class TestModification(unittest.TestCase):
             self.assertEqual(head.modification_values, [])
 
     def test_no_modification_when_not_requested(self):
-        _, card, backend = build("pickup", timestamp=11, with_mod=False)
-        self.assertNotIn("query-meal-detail", backend.calls)
+        """不请求特调时不生成特调载荷；详情查询只服务于套餐去重，非套餐主品零调用。
+
+        去重是默认基础行为，主品若疑似套餐（名含「套餐/三件套」等信号词）会查一次
+        详情展开其内部默认子项，避免配品与套餐内含商品样式重复 —— 这是合理且必要的。
+        但**普通单品主品**（如巨无霸）绝不因此产生任何 query-meal-detail 调用。
+        """
+        from mcd_blind_box.constants import COMBO_NAME_HINTS
+
+        pipeline, card, backend = build("pickup", timestamp=11, with_mod=False)
+        # 核心契约：不请求特调就不生成特调载荷
         self.assertEqual(card.combo.items[0].modification_values, [])
+        # 详情查询（若有）只可能来自「疑似套餐」的主品，不来自普通单品
+        name_of = {meal.product_code: meal.name for meal in pipeline.meals}
+        queried_codes = {
+            e["arguments"].get("code") for e in backend.call_args
+            if e["name"] == "query-meal-detail"
+        }
+        for code in queried_codes:
+            name = name_of.get(code, "")
+            self.assertTrue(
+                any(hint in name for hint in COMBO_NAME_HINTS),
+                f"普通单品「{name}」不该触发详情查询",
+            )
 
     def test_modification_is_carried_into_the_payload(self):
         pipeline, card, _ = build("pickup", timestamp=11, with_mod=True)

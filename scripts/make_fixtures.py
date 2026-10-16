@@ -74,7 +74,7 @@ MAINS: List[Tuple[str, str, str]] = [
     ("1002", "双层吉士汉堡", "22.0"),
     ("1003", "香辣鸡腿堡", "20.5"),
     ("1004", "麦香鸡", "14.5"),
-    ("1005", "鳕鱼堡", "18.0"),
+    ("1005", "鳕鱼堡套餐", "18.0"),
     ("1006", "麻辣鸡腿堡", "21.0"),
     ("1007", "田园脆鸡堡", "16.5"),
     ("1008", "双层牛肉堡", "25.0"),
@@ -303,7 +303,21 @@ MEAL_DETAILS: Dict[str, Dict[str, Any]] = {
                         },
                     }
                 ],
-            }
+            },
+            {
+                "id": 2,
+                "name": "小食",
+                "quantity": 1,
+                "choices": [
+                    {
+                        "code": "2001",
+                        "name": "中薯条",
+                        "quantity": 1,
+                        "isDefault": 1,
+                        "supportModify": False,
+                    }
+                ],
+            },
         ],
     },
 }
@@ -379,11 +393,14 @@ def build_fixtures() -> Dict[str, Any]:
 
     stores = {
         # beType=1 的行**没有** beCode；beType=5/2 的行**一定有** —— 这是硬规则
+        # 每条门店带 city / district，供 searchType=2 的城市/关键词过滤复现真实接口行为
         "1": envelope(
             [
                 {
                     "storeCode": STORE_PICKUP_1,
                     "storeName": "南京新街口餐厅",
+                    "city": "南京",
+                    "district": "秦淮区",
                     "address": "中山南路 1 号",
                     "distance": 182,
                     "businessStatus": True,
@@ -392,10 +409,42 @@ def build_fixtures() -> Dict[str, Any]:
                 {
                     "storeCode": STORE_PICKUP_2,
                     "storeName": "南京鼓楼餐厅",
+                    "city": "南京",
+                    "district": "鼓楼区",
                     "address": "中央路 1 号",
                     "distance": 860,
                     "businessStatus": True,
                     "reservation": False,
+                },
+                {
+                    "storeCode": "100005",
+                    "storeName": "南京河西万达餐厅",
+                    "city": "南京",
+                    "district": "建邺区",
+                    "address": "江东中路 98 号",
+                    "distance": 1240,
+                    "businessStatus": True,
+                    "reservation": True,
+                },
+                {
+                    "storeCode": "100006",
+                    "storeName": "南京江宁百家湖餐厅",
+                    "city": "南京",
+                    "district": "江宁区",
+                    "address": "双龙大道 1698 号",
+                    "distance": 2310,
+                    "businessStatus": True,
+                    "reservation": False,
+                },
+                {
+                    "storeCode": "100007",
+                    "storeName": "苏州观前街餐厅",
+                    "city": "苏州",
+                    "district": "姑苏区",
+                    "address": "观前街 1 号",
+                    "distance": 215000,
+                    "businessStatus": True,
+                    "reservation": True,
                 },
             ]
         ),
@@ -405,6 +454,8 @@ def build_fixtures() -> Dict[str, Any]:
                     "storeCode": STORE_DT,
                     "beCode": "DT9001",
                     "storeName": "南京卡子门得来速店",
+                    "city": "南京",
+                    "district": "秦淮区",
                     "address": "卡子门大街 1 号",
                     "distance": 7841,
                     "businessStatus": True,
@@ -418,6 +469,8 @@ def build_fixtures() -> Dict[str, Any]:
                     "storeCode": STORE_DELIVERY,
                     "beCode": "DL8001",
                     "storeName": "南京鼓楼麦乐送店",
+                    "city": "南京",
+                    "district": "鼓楼区",
                     "address": "中央路 1 号",
                     "businessStatus": True,
                     "reservation": True,
@@ -485,6 +538,29 @@ def build_fixtures() -> Dict[str, Any]:
             "note": "离线假订单模板；create-order 不会产生任何真实交易。",
             "created": envelope(
                 {"orderId": "OFFLINE0001", "status": "待支付", "offline": True}
+            ),
+        },
+        # 套餐单件算价录制：真实服务端对 rounds 套餐的 calculate-price 按
+        # 「展开默认子项」计价，原价高于 query-meals.currentPrice（那只是
+        # 主品挂牌价）。没有这条录制，离线复算会结构性掩盖两套口径的差异
+        # （单项之和恒等于原价），联调真店时才暴露 —— 实测见
+        # docs/live-verification.md（火腿扒麦满分套餐 10.20 vs 展开价 17.00）。
+        # 形状 = 单件 calculate-price 响应的 data（按 productCode 键控）。
+        "combo_prices.json": {
+            "note": (
+                "套餐单件 calculate-price 录制（data 层）；"
+                "1005 鳕鱼堡套餐展开默认子项（鳕鱼堡+中薯条）后原价 2400 分，"
+                "高于菜单挂牌价 1800 分。"
+            ),
+            "1005": envelope(
+                {
+                    "storeCode": STORE_PICKUP_1,
+                    "orderType": 1,
+                    "beType": 1,
+                    "originalPrice": 2400,
+                    "discount": 0,
+                    "price": 2400,
+                }
             ),
         },
     }

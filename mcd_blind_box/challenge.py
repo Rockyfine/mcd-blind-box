@@ -24,6 +24,8 @@ from .constants import (
     MODE_TASTE,
     SEED_STRIDE,
     TASTE_KEYWORDS,
+    TASTE_KEYWORDS_EXTRA,
+    TASTE_NEGATIVE,
 )
 from .errors import ConstraintUnsatisfiable, InvalidArgument
 from .models import Meal
@@ -71,13 +73,27 @@ def has_mode(modes: Sequence[str], mode: str) -> bool:
 # 口味筛选
 # ---------------------------------------------------------------------------
 def match_taste(meal_name: str, taste: str) -> bool:
-    """餐品名是否命中口味关键词（模糊匹配）。"""
+    """餐品名是否命中口味（语义匹配：正向关键词 + 负向排除）。
+
+    比「单纯字段匹配」更进一步：除了逐字表 ``TASTE_KEYWORDS``，还结合
+    ``TASTE_KEYWORDS_EXTRA`` 的场景化关联词扩大命中面，再用 ``TASTE_NEGATIVE``
+    剔除「命中正向词却实为另一品类」的干扰项（如「藤椒甜筒」不该算「辣」）。
+
+    一个餐品若正向命中、但命中任一负向排除词，即判为不匹配 —— 保证口味
+    挑战抽到的是真正符合该口味的餐品，而不是被同名子串误伤的结果。
+    """
     keywords = TASTE_KEYWORDS.get(taste)
     if keywords is None:
         raise InvalidArgument(
             f"未知口味 {taste!r}；可选 {sorted(TASTE_KEYWORDS)}"
         )
-    return any(keyword in meal_name for keyword in keywords)
+    positive = tuple(keywords) + tuple(TASTE_KEYWORDS_EXTRA.get(taste, ()))
+    if not any(keyword in meal_name for keyword in positive):
+        return False
+    negative = TASTE_NEGATIVE.get(taste, ())
+    if any(word in meal_name for word in negative):
+        return False
+    return True
 
 
 def filter_by_taste(meals: Sequence[Meal], taste: Optional[str]) -> List[Meal]:
@@ -339,6 +355,66 @@ def combine_filters(
 
     def _ok(meal: Meal, picked: Sequence[Meal]) -> bool:
         return all(f(meal, picked) for f in active)
+
+    return _ok
+
+
+def style_key_for(name: str, category: str) -> str:
+    """把「名称 + 品类归属」归一成一个样式键（去重判定依据）。
+
+    用「去壳后的名称」：去掉规格/量词前缀（中/大/小等）与尾缀（杯/块/份），
+    让「中薯条」和「大薯条」归一成同一个样式「薯条」，「可口可乐中杯」归一成「可口可乐」。
+    再叠加品类归属作为最终键：名称去不干净时，品类归属兜底（同为 side 也判重复）。
+    """
+    stripped = _strip_style_words(name or "")
+    return f"{category}:{stripped}"
+
+
+def style_key(meal: Meal) -> str:
+    """餐品的样式键 —— :func:`style_key_for` 的便捷包装。"""
+    return style_key_for(meal.name or meal.product_code, meal.category)
+
+
+_STYLE_PREFIXES = ("中", "大", "小", "超大", "超值")
+_STYLE_SUFFIXES = ("杯", "块", "份", "对", "桶", "盒")
+
+
+def _strip_style_words(name: str) -> str:
+    """把「中薯条」→「薯条」、「可口可乐中杯」→「可口可乐」，供样式归一。
+
+    只做**纯字面**的前缀/尾缀剥离，不引入任何词库 —— 剥不干净也没关系，
+    因为 :func:`dedup_extras_filter` 还有「品类归属相同」这一层兜底。
+    """
+    text = name
+    for suffix in _STYLE_SUFFIXES:
+        if text.endswith(suffix) and len(text) > len(suffix):
+            text = text[: -len(suffix)]
+            break
+    for prefix in _STYLE_PREFIXES:
+        if text.startswith(prefix) and len(text) > len(prefix):
+            text = text[len(prefix):]
+            break
+    return text
+
+
+def dedup_extras_filter(
+    occupied_styles: Sequence[str],
+) -> Optional[Callable[[Meal, Sequence[Meal]], bool]]:
+    """构造「配品不与已占用样式重复」的抽取前过滤器。
+
+    ``occupied_styles`` 是已占用餐品的样式键集合（由主品及其套餐内部默认子项、
+    以及已抽配品共同构成）。凡配品的样式键与已占用集相交，就在抽取**之前**被淘汰，
+    从而默认盲盒整体不会出现「套餐里已有一杯薯条、配品又抽一杯薯条」这类样式重复。
+
+    这是「抽取前淘汰、只在剩余集合里抽」这条铁律在「去重」维度上的落实：
+    不是抽完再删，而是压根不让重复样式进入候选池。
+    """
+    if not occupied_styles:
+        return None
+    occupied = frozenset(occupied_styles)
+
+    def _ok(meal: Meal, picked: Sequence[Meal]) -> bool:
+        return style_key(meal) not in occupied
 
     return _ok
 

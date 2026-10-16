@@ -229,6 +229,48 @@ class ModGroup:
         return self.values[0] if self.values else None
 
 
+def _round_defaults(rounds: Any) -> Tuple[Tuple[str, ...], Tuple[str, ...]]:
+    """从套餐的 ``rounds[]`` 里提取「每轮默认选中子商品」的名称与品类。
+
+    每个 round 的 ``choices[]`` 是互斥候选项，默认项由 ``isDefault`` 标出；
+    没有 ``isDefault`` 标记时退到第一个候选项（服务端顺序即默认顺序）。
+
+    只取**默认项**：去重关心的是「套餐开出来默认长什么样」，而不是用户
+    可能改选的那一堆备选。备选属于「可特调」的范畴，不参与去重。
+    """
+    products: List[str] = []
+    categories: List[str] = []
+    if not isinstance(rounds, list):
+        return (), ()
+    for round_item in rounds:
+        if not isinstance(round_item, dict):
+            continue
+        choices = round_item.get("choices") or []
+        if not isinstance(choices, list) or not choices:
+            continue
+        default_choice = None
+        for choice in choices:
+            if not isinstance(choice, dict):
+                continue
+            if choice.get("isDefault") or choice.get("isDefault") == 1:
+                default_choice = choice
+                break
+        if default_choice is None:
+            default_choice = choices[0] if isinstance(choices[0], dict) else None
+        if default_choice is None:
+            continue
+        name = _as_str(
+            _first(default_choice, "name", "productName", "product_name")
+        ).strip()
+        if not name:
+            continue
+        products.append(name)
+        categories.append(
+            classify_category(name, _first(default_choice, "category"))
+        )
+    return tuple(products), tuple(categories)
+
+
 @dataclass(frozen=True)
 class MealDetail:
     """餐品详情（含特调）。
@@ -243,12 +285,19 @@ class MealDetail:
     而 ``calculate-price`` 的 ``roundList`` 结构我们**没有在真实服务端验证通过**
     （实测不带价格返回），所以本项目对这类多轮套餐**不生成特调**，
     而不是猜一个结构发出去。见 :attr:`has_rounds`。
+
+    套餐内部**默认选中的子商品**会被解析进 :attr:`round_products` /
+    :attr:`round_categories`，供「配品与套餐内含商品去重」使用 ——
+    这样默认盲盒不会出现「套餐里已经有一杯中薯条、配品又抽一杯中薯条」的样式重复。
     """
 
     product_code: str
     support_modify: bool = False
     groups: List[ModGroup] = field(default_factory=list)
     has_rounds: bool = False
+    # 套餐内部「默认选中」的子商品：名称与品类归属（供去重）。
+    round_products: Tuple[str, ...] = ()
+    round_categories: Tuple[str, ...] = ()
 
     @classmethod
     def from_api(cls, raw: Dict[str, Any]) -> "MealDetail":
@@ -270,6 +319,8 @@ class MealDetail:
             isinstance(round_item, dict) for round_item in rounds
         )
 
+        round_products, round_categories = _round_defaults(rounds)
+
         return cls(
             product_code=_as_str(_first(data, "productCode", "code", default="")),
             support_modify=bool(_first(data, "supportModify", default=False)),
@@ -279,6 +330,8 @@ class MealDetail:
                 if isinstance(g, dict)
             ],
             has_rounds=has_rounds,
+            round_products=round_products,
+            round_categories=round_categories,
         )
 
 

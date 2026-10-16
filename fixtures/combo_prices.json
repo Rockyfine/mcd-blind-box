@@ -1,0 +1,18 @@
+{
+  "note": "套餐单件 calculate-price 录制（data 层）；1005 鳕鱼堡套餐展开默认子项（鳕鱼堡+中薯条）后原价 2400 分，高于菜单挂牌价 1800 分。",
+  "1005": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "2026-10-14T17:13:43.704",
+    "traceId": "offline-fixture",
+    "data": {
+      "storeCode": "100001",
+      "orderType": 1,
+      "beType": 1,
+      "originalPrice": 2400,
+      "discount": 0,
+      "price": 2400
+    }
+  }
+}

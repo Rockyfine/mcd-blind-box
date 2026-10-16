@@ -135,7 +135,50 @@ class FixtureBackend(Backend):
         return self._load("time.json")
 
     def _tool_query_nearby_stores(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        return self._stores_for(int(args.get("beType")))
+        """回放门店列表，并按真实接口行为做城市/关键词过滤。
+
+        真实 ``query-nearby-stores`` 在 ``searchType=2`` 时会按 ``city`` /
+        ``keyword`` 匹配门店；``searchType=1``（附近）则按距离返回。
+        这里复现同样的行为，避免离线模式下「按城市搜」永远返回全部门店，
+        掩盖了前端搜索链路的问题。
+        """
+        block = self._stores_for(int(args.get("beType")))
+        rows = block.get("data")
+        if not isinstance(rows, list):
+            return block
+
+        search_type = int(args.get("searchType") or 1)
+        if search_type == 2:
+            city = str(args.get("city") or "").strip()
+            keyword = str(args.get("keyword") or "").strip()
+            filtered = []
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                row_city = str(row.get("city") or "").strip()
+                haystack = " ".join(
+                    str(row.get(k) or "")
+                    for k in ("storeName", "city", "district", "address")
+                )
+                # 城市做双向包含匹配（用户可能填「南京」或「南京市」，
+                # 门店可能记「南京」），只要一方包含另一方即视为命中。
+                if city and row_city:
+                    if city not in row_city and row_city not in city:
+                        continue
+                elif city and not row_city:
+                    # 门店没记城市时，退化为看关键词是否命中店名/地址
+                    if keyword and keyword not in haystack:
+                        continue
+                if keyword and keyword not in haystack:
+                    continue
+                filtered.append(row)
+            rows = filtered
+
+        # 原样回放：保持信封结构不变，只替换 data 里的列表
+        return {
+            k: (rows if k == "data" else v)
+            for k, v in block.items()
+        }
 
     def _tool_delivery_query_stores(self, args: Dict[str, Any]) -> Dict[str, Any]:
         if not args.get("addressId"):
@@ -173,6 +216,7 @@ class FixtureBackend(Backend):
             raise InvalidArgument("calculate-price 的 items 必须是数组")
 
         prices = self._unit_prices(store_code, order_type)
+        combo_prices = self._combo_expanded_prices()
         original = 0
         coupon_id: Optional[str] = None
         item_codes: List[str] = []
@@ -181,7 +225,10 @@ class FixtureBackend(Backend):
                 continue
             code = str(item.get("productCode") or "")
             quantity = int(item.get("quantity") or 0)
-            original += prices.get(code, 0) * quantity
+            # 套餐（rounds 结构）按录制的「单件算价」展开价计——
+            # 与真实服务端口径一致：currentPrice 只是主品挂牌价。
+            unit = combo_prices.get(code, prices.get(code, 0))
+            original += unit * quantity
             item_codes.append(code)
             if coupon_id is None and item.get("couponId"):
                 coupon_id = str(item["couponId"])
@@ -287,6 +334,32 @@ class FixtureBackend(Backend):
         )
 
     # -- 本地价格表 ---------------------------------------------------------
+    def _combo_expanded_prices(self) -> Dict[str, int]:
+        """读取「套餐单件算价」录制表：code → 服务端展开子项后的原价（分）。
+
+        ``combo_prices.json`` 缺失时返回空表（老 fixtures 兼容）——
+        此时全部按菜单挂牌价复算，行为与旧版一致。
+        """
+        try:
+            raw = self._load("combo_prices.json")
+        except FixturesMissingError:
+            return {}
+        if not isinstance(raw, dict):
+            return {}
+        out: Dict[str, int] = {}
+        for code, entry in raw.items():
+            if code == "note" or not isinstance(entry, dict):
+                continue
+            # 信封录制：业务数据在 data 层；兼容直接放 data 的写法
+            data = entry.get("data") if isinstance(entry.get("data"), dict) else entry
+            try:
+                value = int(data.get("originalPrice") or 0)
+            except (TypeError, ValueError):
+                continue
+            if value:
+                out[str(code)] = value
+        return out
+
     def _unit_prices(self, store_code: str, order_type: int) -> Dict[str, int]:
         """从录制菜单里读单价（真实字段 ``currentPrice`` 是**元的字符串**）。"""
         block = self._by_store_and_order_type("meals.json", {"storeCode": store_code, "orderType": order_type})

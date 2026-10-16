@@ -242,6 +242,28 @@ beCode      196005902
 
 ---
 
+## 4b. 套餐的两套价格口径（实测：单项之和 ≠ 原价）
+
+联网真店实测（2026-10-16，武汉工大南湖校区餐厅，到店自取）：
+
+- `query-meals.currentPrice` 对套餐只返回**主品挂牌价**（火腿扒麦满分套餐 ¥10.20）；
+- `calculate-price.originalPrice` 对同一套餐返回**展开默认子项后**的总价（¥17.00）；
+- 麦当劳 App 实查证实结算价按展开口径走。
+
+如果把两个口径混排在揭晓卡上（单项行用挂牌价、原价用算价），就会出现
+「单项之和 ¥19.70 ≠ 原价 ¥26.50」。修复（`pipeline._fill_combo_unit_price`）：
+
+- 对名含套餐信号词（`COMBO_NAME_HINTS`）的主品，**单件调一次 `calculate-price`**（无券、无特调），
+  用返回的 `originalPrice` 回填 `unit_price_fen`，按 `product_code` 缓存；
+- 普通单品零额外调用；探测失败保守保留挂牌价，开盒流程不失败；
+- 回填后单项价、原价合计、券后价三者口径一致。
+
+离线侧用 `fixtures/combo_prices.json` 录制该口径差（1005 鳕鱼堡套餐：挂牌 ¥18.00 / 展开价 ¥24.00，
+录制值为示意，真实值以联网单件算价为准），`FixtureBackend` 复算时消费同一张表，
+离线与线上共用同一回填代码路径。测试：`TestComboUnitPriceFillBack`。
+
+---
+
 ## 5. `--live` 与离线的关系
 
 - **离线是默认。** 不传 `--live` 就走 fixtures，不联网、不消耗额度。

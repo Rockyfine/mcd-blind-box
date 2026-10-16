@@ -152,6 +152,20 @@
               }
             }
           ]
+        },
+        {
+          "id": 2,
+          "name": "小食",
+          "quantity": 1,
+          "choices": [
+            {
+              "code": "2001",
+              "name": "中薯条",
+              "quantity": 1,
+              "isDefault": 1,
+              "supportModify": false
+            }
+          ]
         }
       ]
     }

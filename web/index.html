@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>麦门盲盒 · 把今天吃什么交给服务器时间戳</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 金色粒子背景层 -->
+  <div class="bg-particles" aria-hidden="true"></div>
+
+  <!-- ① 品牌栏 -->
+  <header class="brand-bar">
+    <div class="brand">
+      <!-- 麦当劳官方 Logo（红底金拱门，1772×1772 官方方图）。本项目仅用于参加
+           麦当劳官方活动，非商业用途。圆形裁剪 + 金色细描边，与品牌栏红底融合。 -->
+      <img class="arches" src="logo.jpg" alt="麦当劳官方 Logo" width="48" height="48" />
+      <div class="brand-text">
+        <h1>麦门盲盒</h1>
+        <p>把「今天吃什么」交给服务器时间戳</p>
+      </div>
+    </div>
+
+    <div class="conn">
+      <div class="mode-switch" id="modeSwitch" role="group" aria-label="运行模式">
+        <button type="button" class="mode-opt active" data-mode="offline" aria-pressed="true">离线演示</button>
+        <button type="button" class="mode-opt" data-mode="live" aria-pressed="false">联网真店</button>
+      </div>
+      <div class="token-wrap" id="tokenWrap" hidden>
+        <div class="token-field" id="tokenField">
+          <input type="password" id="tokenInput" placeholder="粘贴 MCP Token"
+                 autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off"
+                 aria-label="MCP Token" aria-describedby="tokenHint" />
+          <button type="button" class="token-action token-clear" id="clearToken" title="清空 Token"
+                  aria-label="清空 Token" hidden>✕</button>
+        </div>
+        <p class="token-hint" id="tokenHint" role="status"></p>
+      </div>
+      <div class="conn-status" id="connStatus" title="后端连接状态">
+        <span class="dot"></span><span class="conn-label">连接中…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ② 场景选择 -->
+    <section class="panel">
+      <h2 class="panel-title"><span class="step">1</span>选一种取餐方式</h2>
+      <div class="scene-cards" id="sceneCards" role="group" aria-label="取餐方式">
+        <button type="button" class="scene-card active" data-scene="pickup" aria-pressed="true">
+          <span class="scene-icon">🍔</span>
+          <span class="scene-name">到店自取</span>
+          <span class="scene-hint">到店取，全程不填 beCode</span>
+        </button>
+        <button type="button" class="scene-card" data-scene="dt" aria-pressed="false">
+          <span class="scene-icon">🚗</span>
+          <span class="scene-name">得来速</span>
+          <span class="scene-hint">车道取餐，需 beCode</span>
+        </button>
+        <button type="button" class="scene-card" data-scene="delivery" aria-pressed="false">
+          <span class="scene-icon">🛵</span>
+          <span class="scene-name">麦乐送</span>
+          <span class="scene-hint">送上门，需配送地址</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ③ 门店选择 -->
+    <section class="panel" id="storePanel">
+      <h2 class="panel-title"><span class="step">2</span>选一家门店</h2>
+
+      <!-- 到店/得来速：附近 / 城市搜索 -->
+      <div class="store-search" id="storeSearch" hidden>
+        <div class="search-mode">
+          <label><input type="radio" name="searchType" value="1" checked /> 附近</label>
+          <label><input type="radio" name="searchType" value="2" /> 按城市搜</label>
+        </div>
+        <div class="search-fields" id="searchFields" hidden>
+          <input type="text" id="cityInput" placeholder="城市，如：南京" />
+          <input type="text" id="keywordInput" placeholder="关键词，如：新街口" />
+        </div>
+        <button type="button" class="btn btn-secondary" id="searchStores">查门店</button>
+      </div>
+
+      <!-- 麦乐送：先选地址 -->
+      <div class="address-wrap" id="addressWrap" hidden>
+        <button type="button" class="btn btn-secondary" id="loadAddresses">查配送地址</button>
+        <select id="addressSelect" hidden></select>
+      </div>
+
+      <div class="store-list" id="storeList" role="listbox" aria-label="门店列表">
+        <p class="placeholder" id="storePlaceholder">先选取餐方式，再查门店</p>
+      </div>
+    </section>
+
+    <!-- ④ 挑战模式 -->
+    <section class="panel">
+      <h2 class="panel-title"><span class="step">3</span>给盲盒加点规则（可叠加）</h2>
+      <div class="mode-chips" id="modeChips" role="group" aria-label="挑战模式（可多选）">
+        <button type="button" class="chip" data-mode="blind" aria-pressed="false">🎲 纯盲盒</button>
+        <button type="button" class="chip" data-mode="budget" aria-pressed="false">💰 预算挑战</button>
+        <button type="button" class="chip" data-mode="calorie" aria-pressed="false">🔥 热量挑战</button>
+        <button type="button" class="chip" data-mode="taste" aria-pressed="false">🌶️ 口味挑战</button>
+      </div>
+
+      <div class="constraints" id="constraints">
+        <div class="constraint" id="budgetConstraint" hidden>
+          <label>预算上限（元）</label>
+          <input type="number" id="budgetInput" min="1" step="1" placeholder="如 30" />
+        </div>
+        <div class="constraint" id="calorieConstraint" hidden>
+          <label>热量上限（大卡）</label>
+          <input type="number" id="calorieInput" min="1" step="10" placeholder="如 600" />
+        </div>
+        <div class="constraint" id="tasteConstraint" hidden>
+          <label>想要什么口味</label>
+          <div class="taste-chips" id="tasteChips" role="group" aria-label="口味">
+            <button type="button" class="taste-chip" data-taste="辣" aria-pressed="false"><span class="tc-emoji">🌶️</span><span class="tc-text">香辣过瘾</span></button>
+            <button type="button" class="taste-chip" data-taste="鸡" aria-pressed="false"><span class="tc-emoji">🍗</span><span class="tc-text">无鸡不欢</span></button>
+            <button type="button" class="taste-chip" data-taste="牛" aria-pressed="false"><span class="tc-emoji">🥩</span><span class="tc-text">牛气冲天</span></button>
+            <button type="button" class="taste-chip" data-taste="鱼" aria-pressed="false"><span class="tc-emoji">🐟</span><span class="tc-text">鲜掉眉毛</span></button>
+            <button type="button" class="taste-chip" data-taste="素" aria-pressed="false"><span class="tc-emoji">🥗</span><span class="tc-text">清爽解腻</span></button>
+            <button type="button" class="taste-chip" data-taste="甜" aria-pressed="false"><span class="tc-emoji">🍨</span><span class="tc-text">甜点治愈</span></button>
+            <button type="button" class="taste-chip" data-taste="咖啡" aria-pressed="false"><span class="tc-emoji">☕</span><span class="tc-text">咖啡续命</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑤ 开盒按钮 -->
+    <div class="open-area">
+      <button type="button" class="btn btn-open" id="openBtn" disabled>🎁 开一盒</button>
+      <p class="open-hint" id="openHint">请先选择门店</p>
+    </div>
+
+    <!-- ⑥ 揭晓卡 -->
+    <section class="reveal" id="reveal" aria-live="polite" hidden>
+      <!-- 盲盒动画阶段 -->
+      <div class="box-stage" id="boxStage">
+        <div class="gift-box" id="giftBox">
+          <div class="gift-lid"></div>
+          <div class="gift-body">
+            <span class="gift-arch">M</span>
+          </div>
+          <div class="gift-ribbon"></div>
+        </div>
+        <p class="opening-text" id="openingText">正在开盒…</p>
+      </div>
+
+      <!-- 揭晓卡内容 -->
+      <div class="reveal-card" id="revealCard">
+        <div class="reveal-head">
+          <span class="reveal-title" id="revealTitle" tabindex="-1">麦门盲盒</span>
+          <span class="challenge-badge" id="challengeBadge">挑战成功</span>
+        </div>
+
+        <div class="challenge-progress" id="challengeProgress"></div>
+
+        <ul class="reveal-items" id="revealItems"></ul>
+
+        <div class="reveal-meta">
+          <div class="meta-row"><span>门店</span><strong id="revealStore">—</strong></div>
+          <div class="meta-row price-row">
+            <span>原价</span><strong class="original" id="revealOriginal">—</strong>
+          </div>
+          <div class="meta-row price-row">
+            <span>券后价</span><strong class="payable" id="revealPayable">—</strong>
+          </div>
+          <div class="meta-row coupon-row" id="revealCouponRow" hidden>
+            <span>用券</span><strong class="coupon" id="revealCoupon">—</strong>
+          </div>
+          <div class="meta-row" id="revealTakeWayRow" hidden>
+            <span>取餐方式</span><strong id="revealTakeWay">—</strong>
+          </div>
+        </div>
+
+        <p class="quip" id="revealQuip"></p>
+
+        <div class="seed-line" id="revealSeed"></div>
+
+        <ul class="notes" id="revealNotes"></ul>
+
+        <p class="nutrition-note" id="nutritionNote" hidden>营养数据仅供参考，非医疗或健康建议。</p>
+
+        <div class="reveal-actions">
+          <button type="button" class="btn btn-secondary" id="shareBtn">📋 复制分享文案</button>
+          <button type="button" class="btn btn-order" id="orderBtn">✅ 确认下单</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ⑦ 下单确认弹窗 -->
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" hidden>
+    <div class="modal">
+      <h3 class="modal-title" id="confirmTitle">⚠️ 确认真实下单</h3>
+      <div class="modal-body" id="confirmBody"></div>
+      <div class="modal-remark" id="confirmRemarkWrap" hidden>
+        <label>备注（选填，仅外送，≤50 字）</label>
+        <input type="text" id="remarkInput" maxlength="50" placeholder="如：无接触配送" />
+      </div>
+      <label class="modal-check">
+        <input type="checkbox" id="confirmCheck" />
+        我已核对以上明细，确认要真实下单
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelOrderBtn">取消</button>
+        <button type="button" class="btn btn-order" id="doOrderBtn" disabled>我确认下单</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑧ 下单结果弹窗 -->
+  <div class="modal-backdrop" id="orderResultModal" role="dialog" aria-modal="true" aria-labelledby="orderResultTitle" hidden>
+    <div class="modal">
+      <h3 class="modal-title" id="orderResultTitle">🎉 下单成功</h3>
+      <div class="modal-body" id="orderResultBody"></div>
+      <div class="pay-guide" id="payGuide">
+        <p class="pay-guide-title">如何支付</p>
+        <p class="pay-guide-text">
+          打开<b>麦当劳 App</b>或<b>微信/支付宝小程序</b>，在「我的订单 / 到店取餐」里找到这笔订单完成支付；
+          到店取餐单也可直接到柜台扫码支付。
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="closeOrderResultBtn">知道了</button>
+        <button type="button" class="btn btn-order" id="checkOrderStatusBtn">查支付状态</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

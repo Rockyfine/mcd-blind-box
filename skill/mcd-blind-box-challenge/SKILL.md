@@ -162,6 +162,8 @@ create-order(storeCode, orderType, beType, items[], takeWayCode 或 addressId, .
 
 **12. 盲盒不得编造。** 候选集必须来自 `query-meals` 真实返回。抽不出符合约束的组合时，如实说明并给出放宽条件后的选项。
 
+**12b. 盲盒默认是「单人餐」且不重复。** 一份主品 + 至多几件配品，配品不得与主品（含套餐默认子项）「样式重复」——按 `name`（去规格词）与 `category` 判定，重复就在抽取前自动换候选。详见 `references/challenge-rules.md` 第三节。
+
 **13. 未返回的 id 不要猜。** `couponId`、`couponCode`、会员号等，工具没返回就不要自己生成。
 
 **14. 工具名不要写错。** 是 `query-nearby-stores`（不是 `query-nearby-store`）；是 `delivery-query-addresses`（不是 `delivery-query-address`）。
