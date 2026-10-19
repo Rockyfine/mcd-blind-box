@@ -43,5 +43,7 @@ desktop.ini
 # ---- 本地临时 ----
 *.local.*
 docs/images/*.local.*
+# scripts/shoot_readme.py build 出来的临时驱动页（clean 会删，中途失败会残留）
+web/__shot.html
 tmp/
 scratch/
