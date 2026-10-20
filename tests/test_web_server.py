@@ -127,16 +127,21 @@ class TestStores(unittest.TestCase):
             srv.do_stores(True, None, {"scene": "pickup", "searchType": 2, "city": "南京"})
 
     def test_city_search_filters_by_city(self) -> None:
-        # fixtures 里有南京（4 家）和苏州（1 家），按城市「苏州」搜应只剩 1 家
+        # 城市搜索仍然按城市匹配；但离线只暴露**已录制菜单**的门店，
+        # 苏州那家（100007）只有门店记录、没有菜单，所以搜它返回空。
         res = srv.do_stores(True, None, {
             "scene": "pickup", "searchType": 2, "city": "苏州", "keyword": "观前街",
         })
         self.assertTrue(res["ok"])
-        self.assertEqual(len(res["stores"]), 1)
-        self.assertEqual(res["stores"][0]["storeName"], "苏州观前街餐厅")
+        self.assertEqual(res["stores"], [])
+
+        res = srv.do_stores(True, None, {
+            "scene": "pickup", "searchType": 2, "city": "南京", "keyword": "鼓楼",
+        })
+        self.assertEqual([s["storeName"] for s in res["stores"]], ["南京鼓楼餐厅"])
 
     def test_keyword_search_narrows_results(self) -> None:
-        # 关键词「新街口」在南京 4 家里只命中 1 家
+        # 关键词「新街口」在南京已录制菜单的门店里只命中 1 家
         res = srv.do_stores(True, None, {
             "scene": "pickup", "searchType": 2, "city": "南京", "keyword": "新街口",
         })
@@ -145,10 +150,42 @@ class TestStores(unittest.TestCase):
         self.assertEqual(res["stores"][0]["storeCode"], "100001")
 
     def test_nearby_search_returns_all_in_city(self) -> None:
-        # searchType=1（附近）不做关键词过滤，返回该 beType 全部门店
+        # searchType=1（附近）不做关键词过滤，返回该 beType 下**已录制菜单**的门店。
+        # fixtures 的到店列表是服务端原样录制（5 家），但只有两家录了菜单；
+        # 把没有菜单的门店摆给用户，点下去只会是 FixturesMissingError。
         res = srv.do_stores(True, None, {"scene": "pickup", "searchType": 1})
         self.assertTrue(res["ok"])
-        self.assertEqual(len(res["stores"]), 5)
+        self.assertEqual(
+            [s["storeCode"] for s in res["stores"]], ["100001", "100002"]
+        )
+
+    def test_every_listed_store_can_open_a_box(self) -> None:
+        """门店列表与菜单覆盖必须一致：列表里每一家都得能开出盒。
+
+        这条是给「离线演示」兜底的 —— 一旦 fixtures 里新增/删除了门店而列表没同步，
+        用户点进去就会撞上 FixturesMissingError，而那种失败在演示页面上最刺眼。
+        """
+        for scene in ("pickup", "dt", "delivery"):
+            body = {"scene": scene, "searchType": 1}
+            if scene == "delivery":
+                body["addressId"] = "A1001"
+            res = srv.do_stores(True, None, body)
+            self.assertTrue(res["ok"], msg=scene)
+            for store in res["stores"]:
+                payload = {
+                    "scene": scene,
+                    "store": {
+                        "storeCode": store["storeCode"],
+                        "storeName": store["storeName"],
+                        "beCode": store["beCode"],
+                    },
+                    "modes": [],
+                    "timestampMs": 1789000000000,
+                }
+                if scene == "delivery":
+                    payload["addressId"] = "A1001"
+                opened = srv.do_open(True, None, payload, srv.SessionStore())
+                self.assertTrue(opened["ok"], msg=f"{scene}/{store['storeCode']}")
 
 
 class TestAddresses(unittest.TestCase):

@@ -5,6 +5,21 @@
 
 一个 WorkBuddy Skill + 一套零依赖 Python 实现。clone 下来就能离线跑通全部流程：不需要 Token、不联网、不产生任何真实订单。
 
+<p align="center">
+  <a href="https://mcd-blind-box.app.workbuddy.host/?sharecode=SVSEGRMHHC">
+    <img src="https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E5%BC%80%E4%B8%80%E7%9B%92-%E4%B8%8D%E7%94%A8%E5%AE%89%E8%A3%85-DA291C?style=for-the-badge" alt="在线开一盒，不用安装" height="44">
+  </a>
+  <br>
+  <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/dependencies-0-2E7D32" alt="零第三方依赖">
+  <img src="https://img.shields.io/badge/tests-410_passing-2E7D32" alt="410 个单元测试">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
+</p>
+
+**不用装任何东西，点开就能开一盒 → [mcd-blind-box.app.workbuddy.host](https://mcd-blind-box.app.workbuddy.host/?sharecode=SVSEGRMHHC)**
+
+> 一个盲盒让你会心一笑的话，点个 ⭐ 就是最好的支持 —— 这也是本次比赛唯一的计分方式。
+
 ```
 【麦门盲盒 · 预算挑战 + 口味挑战（辣）】
 
@@ -75,7 +90,7 @@ python -m mcd_blind_box open --offline --mode budget --budget 30 --seed 7
 python -m mcd_blind_box open --offline --mode calorie --calorie-max 600 --seed 3
 python -m mcd_blind_box open --offline --scene dt                    # 改用得来速 / 麦乐送：--scene delivery
 python -m mcd_blind_box verify --offline                             # 自检：fixtures 齐全 + 证明零第三方依赖
-python scripts/smoke_offline.py && python -m unittest discover -s tests -t .   # 20 冒烟 + 409 单测
+python scripts/smoke_offline.py && python -m unittest discover -s tests -t .   # 20 冒烟 + 410 单测
 ```
 
 ---
@@ -185,7 +200,7 @@ $ python -m mcd_blind_box order --offline --seed 1789000000000
 ├── skill/mcd-blind-box-challenge/  ★ WorkBuddy Skill：SKILL.md + references/ 五份规则
 ├── web/                         ★ 网页界面：server.py（标准库桥接）+ index / style / app
 ├── fixtures/                    离线数据（服务端响应的原样录制，由生成器产出）
-├── tests/                       409 个单元测试；scripts/ 为生成器、冒烟、安装与 README 截图脚本
+├── tests/                       410 个单元测试；scripts/ 为生成器、冒烟、安装与 README 截图脚本
 ├── docs/                        architecture / live-verification / dialogue / images
 ├── MCP_INTEGRATION.md           用了哪些工具、怎么串、业务价值
 └── CONTEST_DECLARATION.md       参赛声明（官方原文，内容不可改动）
@@ -219,7 +234,7 @@ $ python -m mcd_blind_box order --offline --seed 1789000000000
 ## 八、测试
 
 ```bash
-python -m unittest discover -s tests -t .     # 409 个单元测试
+python -m unittest discover -s tests -t .     # 410 个单元测试
 python scripts/smoke_offline.py               # 20 条端到端冒烟
 python scripts/make_fixtures.py --check       # fixtures 是否与生成器同步
 ```

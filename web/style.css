@@ -387,6 +387,14 @@ html, body {
 .placeholder { color: var(--ink-soft); font-size: 13px; margin: 6px 0; }
 .placeholder.error { color: var(--red); }
 
+/* 离线演示说明：只在「离线演示」模式显示，避免把示例门店误当成 bug */
+.store-note {
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+
 /* 骨架屏：加载态 shimmer 占位 */
 .skeleton {
   border-radius: 12px;

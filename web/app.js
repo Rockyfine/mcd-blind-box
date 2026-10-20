@@ -28,6 +28,7 @@
   const $ = (id) => document.getElementById(id);
   const els = {
     modeSwitch: $("modeSwitch"),
+    offlineStoreNote: $("offlineStoreNote"),
     tokenWrap: $("tokenWrap"),
     tokenField: $("tokenField"),
     tokenInput: $("tokenInput"),
@@ -193,6 +194,7 @@
       b.setAttribute("aria-pressed", on ? "true" : "false");
     });
     els.tokenWrap.hidden = state.mode !== "live";
+    els.offlineStoreNote.hidden = state.mode !== "offline";
     if (state.mode === "offline") {
       token = "";
       els.tokenInput.value = "";

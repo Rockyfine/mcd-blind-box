@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import secrets
 import sys
 import threading
@@ -33,7 +34,7 @@ import time
 from dataclasses import replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import urlparse
 
 # 让 ``import mcd_blind_box`` 能从仓库根目录解析到（web/ 在仓库根下）。
@@ -178,6 +179,23 @@ def _resolve_offline(
     return handler_offline
 
 
+def _offline_store_codes(backend: Backend) -> Set[str]:
+    """离线模式下真正能开出盒的门店。
+
+    fixtures 的门店列表是服务端响应原样录制（到店 5 家），但菜单只录了其中 4 家。
+    把没有菜单的门店摆在页面上，用户点下去只会得到 FixturesMissingError ——
+    离线演示里这是最刺眼的失败，所以在列表层就过滤掉。
+    """
+    fixtures_dir = getattr(backend, "dir", None)
+    if fixtures_dir is None:
+        return set()
+    try:
+        table = json.loads((Path(fixtures_dir) / "meals.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return set()
+    return {str(k) for k in table} if isinstance(table, dict) else set()
+
+
 def do_stores(
     offline: bool,
     token: Optional[str],
@@ -216,6 +234,10 @@ def do_stores(
     from mcd_blind_box.models import Store
 
     stores = [Store.from_api(r, be_type) for r in rows]
+    if offline:
+        available = _offline_store_codes(backend)
+        if available:
+            stores = [s for s in stores if s.store_code in available]
     return {
         "ok": True,
         "stores": [
@@ -282,12 +304,18 @@ def do_open(
     pipeline.fetch_menu()
 
     modes = [str(m) for m in (body.get("modes") or [])]
+    timestamp_ms = body.get("timestampMs")
+    if offline and not timestamp_ms:
+        # 离线 fixtures 里的 now-time-info 是固定录制值，直接回放会让每次开盒
+        # 得到同一套组合 —— 在演示页面上这就是「假随机」。这里改用真实时间戳：
+        # 每次都不一样，而卡片上的种子仍能拿回 CLI 用 --seed 复跑出同一结果。
+        timestamp_ms = int(time.time() * 1000)
     card = pipeline.open_box(
         modes=modes,
         budget_yuan=body.get("budgetYuan"),
         calorie_cap=body.get("calorieCap"),
         taste=body.get("taste") or None,
-        timestamp_ms=body.get("timestampMs"),
+        timestamp_ms=timestamp_ms,
         with_modification=bool(body.get("withModification")),
     )
 
@@ -551,8 +579,19 @@ def main(argv: Optional[List[str]] = None) -> int:
         prog="mcd-blind-box-web",
         description="麦门盲盒网页交互层的本地桥接后端（仅标准库）。",
     )
-    parser.add_argument("--host", default="127.0.0.1", help="监听地址（默认仅本机）")
-    parser.add_argument("--port", type=int, default=8787, help="监听端口（默认 8787）")
+    # 云托管（反向代理）会把端口与绑定地址注入 PORT / HOST 环境变量；
+    # 本地开发时两者都不存在，仍然只监听 127.0.0.1:8787。
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("HOST") or "127.0.0.1",
+        help="监听地址（默认仅本机；云托管时由 HOST 环境变量注入）",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("PORT") or 8787),
+        help="监听端口（默认 8787；云托管时由 PORT 环境变量注入）",
+    )
     parser.add_argument(
         "--offline",
         action="store_true",
