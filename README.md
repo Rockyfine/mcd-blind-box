@@ -49,11 +49,11 @@
 
 > 以下均为 `python web/server.py --offline` 的实机截图（离线 fixtures 数据），不是设计稿。
 
-![麦门盲盒网页版首页：红色品牌栏、到店自取/得来速/麦乐送三张场景卡、门店列表、四种挑战模式与开一盒按钮](docs/images/ui-home.png)
+![麦门盲盒网页版首页：红色品牌栏、到店自取/得来速/麦乐送三张场景卡、门店列表、四种挑战模式与开一盒按钮](https://gcore.jsdelivr.net/gh/Rockyfine/mcd-blind-box@main/docs/images/ui-home.png)
 
-![开盒动画：礼物盒摇晃，提示正在开盒](docs/images/ui-opening.png)
+![开盒动画：礼物盒摇晃，提示正在开盒](https://gcore.jsdelivr.net/gh/Rockyfine/mcd-blind-box@main/docs/images/ui-opening.png)
 
-![揭晓卡：挑战成功徽章、主品与配品、原价与券后价、用券信息、可验算的种子行](docs/images/ui-reveal.png)
+![揭晓卡：挑战成功徽章、主品与配品、原价与券后价、用券信息、可验算的种子行](https://gcore.jsdelivr.net/gh/Rockyfine/mcd-blind-box@main/docs/images/ui-reveal.png)
 
 *首页 → 开盒 → 揭晓：纯静态页面 + 本地桥接后端，零构建、零第三方依赖。*
 
